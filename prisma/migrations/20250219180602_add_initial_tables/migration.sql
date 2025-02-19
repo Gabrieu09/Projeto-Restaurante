@@ -37,7 +37,7 @@ CREATE TABLE "Product" (
     "price" DOUBLE PRECISION NOT NULL,
     "imageUrl" TEXT NOT NULL,
     "ingredients" TEXT[],
-    "restarantID" TEXT NOT NULL,
+    "restaurantID" TEXT NOT NULL,
     "menuCategoryID" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE "OrderProduct" (
 ALTER TABLE "MenuCategory" ADD CONSTRAINT "MenuCategory_restaurantId_fkey" FOREIGN KEY ("restaurantId") REFERENCES "Restaurant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_restarantID_fkey" FOREIGN KEY ("restarantID") REFERENCES "Restaurant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Product" ADD CONSTRAINT "Product_restaurantID_fkey" FOREIGN KEY ("restaurantID") REFERENCES "Restaurant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_menuCategoryID_fkey" FOREIGN KEY ("menuCategoryID") REFERENCES "MenuCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
