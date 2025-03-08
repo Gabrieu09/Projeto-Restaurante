@@ -8,6 +8,7 @@ export const isValidCpf = (cpf: string): boolean => {
 
   // Verifica se o CPF tem 11 dígitos
   if (cpf.length !== 11) {
+    
     return false;
   }
 
