@@ -1,6 +1,6 @@
-import { db } from '@data/db';
+import { db } from "@/lib/prisma";
 
-expor const getRestaurantBySlug = async (slug: string) => {
+export const getRestaurantBySlug = async (slug: string) => {
   const restaurant = await db.restaurant.findUnique({ where: { slug } });
   return restaurant;
-}
+};
