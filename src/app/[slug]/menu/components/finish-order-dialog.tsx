@@ -76,27 +76,27 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
       const consumptionMethod = searchParams.get(
         "consumptionMethod",
       ) as ConsumptionMethod;
-
-      const order = await createOrder({
-        consumptionMethod,
-        customerCpf: data.cpf,
-        customerName: data.name,
-        products,
-        slug,
-      });
-      const { sessionId } = await createStripeCheckout({
-        products,
-        orderId: order.id,
-        slug,
-        consumptionMethod,
-        cpf: data.cpf,
-      });
-      if (!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY) return;
-      const stripe = await loadStripe(
-        process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY,
-      );
-      stripe?.redirectToCheckout({
-        sessionId: sessionId,
+      startTransition(async () => {
+        const order = await createOrder({
+          consumptionMethod,
+          customerCpf: data.cpf,
+          customerName: data.name,
+          products,
+          slug,
+        });
+        const { sessionId } = await createStripeCheckout({
+          products,
+          slug,
+          consumptionMethod,
+          orderId: order.id,
+        });
+        const stripe = await loadStripe(
+          process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!,
+        );
+        if (!stripe) return;
+        await stripe.redirectToCheckout({
+          sessionId,
+        });
       });
     } catch (error) {
       console.error(error);
