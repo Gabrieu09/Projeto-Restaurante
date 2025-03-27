@@ -21,14 +21,14 @@ export const POST = async (request: Request) => {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
 
-    // pegar produtos
-    // const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
-    //   event.data.object.id,
-    //   {
-    //     expand: ["line_items"],
-    //   },
-    // );
-    // const lineItems = sessionWithLineItems.line_items;
+     //pegar produtos
+   const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
+       event.data.object.id,
+       {
+         expand: ["line_items"],
+       },
+     );
+     const lineItems = sessionWithLineItems.line_items;
 
     // ATUALIZAR PEDIDO
     if (!session.metadata?.orderId) {
