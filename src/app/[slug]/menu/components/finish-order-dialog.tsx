@@ -50,6 +50,9 @@ const formSchema = z.object({
     .refine((value) => isValidCpf(value), {
       message: "CPF inválido.",
     }),
+    paymentMethod: z.enum(["CARD", "PIX", "VOUCHER"], {
+      required_error: "Selecione um método de pagamento.",
+    }),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -70,6 +73,7 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
     defaultValues: {
       name: "",
       cpf: "",
+      paymentMethod: "CARD",
     },
     shouldUnregister: true,
   });
@@ -86,6 +90,7 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
         customerName: data.name,
         products,
         slug,
+        paymentMethod: data.paymentMethod,
       });
       // const { session } = await createStripeCheckout({
       //   products,
@@ -162,6 +167,27 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
                   </FormItem>
                 )}
               />
+              <FormField
+  control={form.control}
+  name="paymentMethod"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Método de Pagamento</FormLabel>
+      <FormControl>
+        <select
+          {...field}
+          className="w-full border border-input rounded-md p-2"
+        >
+          <option value="CARD">Cartão</option>
+          <option value="PIX">Pix</option>
+          <option value="VOUCHER">Voucher</option>
+        </select>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
 
               <DrawerFooter>
                 <Button

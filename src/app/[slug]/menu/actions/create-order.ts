@@ -15,6 +15,7 @@ interface CreateOrderInput {
     quantity: number;
   }>;
   consumptionMethod: ConsumptionMethod;
+  paymentMethod: "CARD" | "PIX" | "VOUCHER";
   slug: string;
 }
 
@@ -44,6 +45,7 @@ export const createOrder = async (input: CreateOrderInput) => {
       status: "PENDING",
       customerName: input.customerName,
       customerCpf: removeCpfPunctuation(input.customerCpf),
+      paymentMethod: input.paymentMethod,
       orderProducts: {
         createMany: {
           data: productsWithPricesAndQuantities,

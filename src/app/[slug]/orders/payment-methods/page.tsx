@@ -1,52 +1,54 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { updatePaymentMethod } from "@/app/[slug]/menu/actions/update-payment-method";
 
 export default function PaymentMethodsPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const consumptionMethod = searchParams.get("consumptionMethod");
-  const cpf = searchParams.get("cpf");
-  const orderId = searchParams.get("orderId");
+  const orderId = Number(searchParams.get("orderId"));
 
-  const handleSelectMethod = (method: string) => {
-    console.log("Selecionado:", method);
-    // Aqui você pode redirecionar ou fazer uma chamada para registrar o método
-    // Exemplo:
-    // router.push(`/pagamento/${orderId}?method=${method}`);
-  };
+  async function handleSelectPayment(method: "CARD" | "PIX" | "VOUCHER") {
+    if (!orderId) return;
+
+    try {
+      await updatePaymentMethod({
+        orderId,
+        paymentMethod: method,
+      });
+
+      router.push("/orders");
+    } catch (error) {
+      console.error("Erro ao atualizar método de pagamento:", error);
+    }
+  }
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        Escolha o meio de pagamento
-      </h1>
+    <div className="flex flex-col items-center justify-center gap-6 h-screen p-4">
+      <h1 className="text-xl font-bold">Escolha o método de pagamento</h1>
 
-      <p className="text-sm text-gray-500 mb-6 text-center">
-        Pedido #{orderId} • CPF: {cpf} • Consumo: {consumptionMethod}
-      </p>
-
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-full max-w-xs">
         <Button
-          className="w-full text-left py-6 px-4 text-lg"
-          onClick={() => handleSelectMethod("cartao")}
+          className="w-full rounded-full"
+          onClick={() => handleSelectPayment("CARD")}
         >
-          💳 Cartão de Crédito / Débito
+          Cartão
         </Button>
         <Button
-          className="w-full text-left py-6 px-4 text-lg"
-          onClick={() => handleSelectMethod("voucher")}
+          className="w-full rounded-full"
+          onClick={() => handleSelectPayment("PIX")}
+          variant="outline"
         >
-          📄 Voucher / Vale-refeição
+          Pix
         </Button>
         <Button
-          className="w-full text-left py-6 px-4 text-lg"
-          onClick={() => handleSelectMethod("pix")}
+          className="w-full rounded-full"
+          onClick={() => handleSelectPayment("VOUCHER")}
+          variant="ghost"
         >
-          ⚡ Pix
+          Voucher
         </Button>
       </div>
     </div>
