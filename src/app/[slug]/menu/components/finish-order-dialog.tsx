@@ -2,14 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConsumptionMethod } from "@prisma/client";
-import { loadStripe } from "@stripe/stripe-js";
+// import { loadStripe } from "@stripe/stripe-js";
 import { Loader2Icon } from "lucide-react";
-import { useParams, useSearchParams } from "next/navigation";
+// import { useParams, useSearchParams } from "next/navigation";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { z } from "zod";
-
+// adicionado:
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -62,6 +63,7 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
   const { slug } = useParams<{ slug: string }>();
   const { products } = useContext(CartContext);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -85,20 +87,31 @@ const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
         products,
         slug,
       });
-      const { sessionId } = await createStripeCheckout({
+      // const { session } = await createStripeCheckout({
+      //   products,
+      //   orderId: order.id,
+      //   slug,
+      //   consumptionMethod,
+      //   cpf: data.cpf,
+      // });
+      // if (!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY) return;
+      // const stripe = await loadStripe(
+      //   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY,
+      // );
+      // stripe?.redirectToCheckout({
+      //   sessionId: sessionId,
+      // });
+
+      // nova adição:
+      const { redirectUrl } = await createStripeCheckout({
         products,
         orderId: order.id,
         slug,
         consumptionMethod,
         cpf: data.cpf,
       });
-      if (!process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY) return;
-      const stripe = await loadStripe(
-        process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY,
-      );
-      stripe?.redirectToCheckout({
-        sessionId: sessionId,
-      });
+      router.push(redirectUrl);
+
     } catch (error) {
       console.error(error);
     } finally {
