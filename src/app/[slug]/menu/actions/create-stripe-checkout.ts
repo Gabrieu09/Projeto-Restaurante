@@ -59,7 +59,7 @@ export const createStripeCheckout = async ({
     //   quantity: product.quantity,
     // })),
   // });
-  const redirectUrl = `${origin}/${slug}/orders/payment-methods?${searchParams.toString()}`;
+  const redirectUrl = `${origin}/${slug}/orders?${searchParams.toString()}`;
   
   return { redirectUrl };
 };
